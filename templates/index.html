@@ -8,22 +8,48 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-family: 'Arial', sans-serif; /* Modern font */
             text-align: center;
             margin: 0;
             padding: 0;
-            background-color: #f0f4c3; /* Light yellowish background */
+            background-color: #f5f5f5; /* Light gray background */
+            color: #333;
+        }
+ 
+        h1 {
+            font-size: 2em; /* Reduced font size */
+            margin: 15px 0; /* Reduced margin */
+            color: #3498db; /* Blue heading */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+ 
+        h2 {
+            font-size: 1.6em; /* Reduced font size */
+            margin: 15px 0; /* Reduced margin */
+            color: #2c3e50; /* Dark blue heading */
+        }
+ 
+        h4 {
+            font-size: 1.3em; /* Reduced font size */
+            margin: 10px 0; /* Reduced margin */
+            color: #34495e; /* Darker blue heading */
+        }
+ 
+        p {
+            font-size: 14px; /* Reduced font size */
+            color: #555;
+            line-height: 1.4;
         }
  
         .toolbar {
             display: flex;
             justify-content: space-around;
             align-items: center;
-            background-color: #aed581; /* Light green toolbar */
-            padding: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin: 0 0px;
-            border-radius: 8px;
+            background-color: #ecf0f1; /* Light gray toolbar */
+            padding: 5px; /* Reduced padding */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            border-radius: 5px; /* Reduced border radius */
+            margin-bottom: 10px; /* Reduced margin */
         }
  
         .toolbar-item {
@@ -32,162 +58,148 @@
  
         .toolbar-item label {
             display: block;
-            font-size: 14px;
-            margin-bottom: 5px;
-            color: #333;
+            font-size: 12px;
+            margin-bottom: 3px;
+            color: #777;
         }
  
         .toolbar select {
-            padding: 5px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 150px;
+            padding: 6px; /* Reduced padding */
+            font-size: 12px;
+            border: 1px solid #bdc3c7; /* Light border */
+            border-radius: 3px; /* Reduced border radius */
+            width: 120px;
             background-color: #fff;
+            color: #333;
+            transition: border-color 0.3s;
+        }
+ 
+        .toolbar select:focus {
+            outline: none;
+            border-color: #3498db; /* Blue border on focus */
         }
  
         .container {
-            width: 70%;
-            margin: 20px auto;
+            width: 95%; /* Increased width */
+            max-width: 1200px;
+            margin: 10px auto; /* Reduced margin */
             text-align: center;
-        }
- 
-        .plot {
-            width: 100%;
-            height: auto;
-        }
- 
-        .buttons {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
- 
-        .button-replay,
-        .button-skip {
-            font-size: 24px;
-            border: none;
-            cursor: pointer;
-            background: none;
-            color: #333;
-        }
- 
-        .button-play {
-            font-size: 28px;
-            background-color: #ff5722;
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 50%;
-            cursor: pointer;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
- 
-        .button-play:hover {
-            background-color: #e64a19;
         }
  
         .main-container {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            padding-top: 20px;
-            gap: 20px;
+            padding: 10px; /* Reduced padding */
+            gap: 10px; /* Reduced gap */
+            background-color: #fff;
+            border-radius: 8px; /* Reduced border radius */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
  
         .column {
             flex: 1;
-           
+            padding: 10px; /* Reduced padding */
+        }
+ 
+        .column h4 {
+            font-size: 1.4em; /* Reduced font size */
+            margin-bottom: 8px; /* Reduced margin */
+            color: #34495e;
+        }
+ 
+        .column p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.4;
         }
  
         .metrics {
             flex: 1;
-            padding: 15px;
- 
+            padding: 10px; /* Reduced padding */
         }
  
         .layer-button {
-            font-size: 24px;
-            padding: 10px 15px;
-            margin: 5px;
+            font-size: 14px; /* Reduced font size */
+            padding: 8px 12px; /* Reduced padding */
+            margin: 3px; /* Reduced margin */
             cursor: pointer;
-            border: 2px solid #000;
-            background-color: #ffeb3b;
-            border-radius: 10px;
+            border: none;
+            background-color: #3498db; /* Blue button */
+            color: #fff;
+            border-radius: 4px; /* Reduced border radius */
+            transition: background-color 0.3s;
         }
  
         .layer-button:hover {
-            background-color: #fdd835;
+            background-color: #2980b9; /* Darker blue on hover */
         }
  
         .output-stats {
-            margin-top: 20px;
+            margin-top: 10px; /* Reduced margin */
         }
  
         .output-stats .value {
-            font-size: 28px;
+            font-size: 24px; /* Reduced font size */
             font-weight: bold;
-            color: #4CAF50;
+            color: #27ae60; /* Green accuracy */
         }
  
-        /* Styles for neural network visualization */
         .network-container {
             position: relative;
             display: flex;
             justify-content: center;
-            margin: 0 auto;
-            min-height: 200px;
+            margin: 10px auto; /* Reduced margin */
+            min-height: 150px; /* Reduced height */
         }
  
         .layer {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 10px;
+            margin: 5px; /* Reduced margin */
             position: relative;
         }
  
         .neuron {
-            width: 60px;  /* Increased neuron size */
-            height: 60px; /* Increased neuron size */
-            background-color: #ff9800;
+            width: 50px;
+            height: 50px;
+            background-color: #f39c12; /* Orange neuron */
             border-radius: 50%;
-            margin: 10px;
+            margin: 5px; /* Reduced margin */
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 16px; /* Increased font size */
-            position: relative;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+            font-size: 14px;
+            color: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
  
         .output-neuron {
-            background-color: #689f38; /* Darker green output neuron */
+            background-color: #27ae60; /* Green output neuron */
             color: white;
-            width: auto; /* Adjust width to content */
-            height: 70px; /* Increased output neuron size */
-            min-width: 70px; /* Minimum width */
-            padding: 5px; /* Add padding */
-            font-size: 18px; /* Increased font size */
+            width: auto;
+            height: 60px;
+            min-width: 60px;
+            padding: 3px;
+            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
  
         .weights {
-            font-size: 12px;
+            font-size: 10px;
             margin-top: 1px;
+            color: #777;
         }
  
         .layer-label {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             margin-top: 2px;
+            color: #34495e;
         }
  
         .svg-overlay {
@@ -199,58 +211,58 @@
             pointer-events: none;
         }
  
-        h1, h2, h4 {
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
- 
-        p {
-            color: #555;
-        }
- 
         button {
-            background-color: #aed581; /* Light green button */
+            background-color: #3498db; /* Blue button */
             border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 10px 20px; /* Reduced padding */
+            border-radius: 6px; /* Reduced border radius */
             cursor: pointer;
-            font-size: 18px;
-            color: #333;
+            font-size: 16px;
+            color: #fff;
+            transition: background-color 0.3s;
         }
  
         button:hover {
-            background-color: #8bc34a; /* Slightly darker green on hover */
+            background-color: #2980b9; /* Darker blue on hover */
         }
-
-        .requirements {
-            margin: 20px auto;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff;
-            width: 80%;
-            text-align: left;
-        }
-        .requirements h3 {
-            margin-top: 0;
-        }
-
+ 
         input[type="number"] {
-            padding: 8px;
-            font-size: 16px;
-            border: 2px solid #4fc3f7; /* Brighter border color */
-            border-radius: 8px;
-            width: 120px;
-            margin-bottom: 10px;
+            padding: 8px; /* Reduced padding */
+            font-size: 14px;
+            border: 2px solid #3498db; /* Blue border */
+            border-radius: 6px; /* Reduced border radius */
+            width: 100px; /* Reduced width */
+            margin-bottom: 5px; /* Reduced margin */
             background-color: #fff;
             color: #333;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s;
         }
-
+ 
         input[type="number"]:focus {
             outline: none;
-            border-color: #29b6f6; /* Highlight border on focus */
+            border-color: #2980b9; /* Darker blue on focus */
+        }
+ 
+        .parameters-display {
+            flex: 1;
+            padding: 10px; /* Reduced padding */
+            background-color: #fff;
+            border-radius: 8px; /* Reduced border radius */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+ 
+        .parameters-display h4 {
+            font-size: 16px; /* Reduced font size */
+            margin-bottom: 5px; /* Reduced margin */
+            color: #34495e;
+        }
+ 
+        .parameters-display p {
+            font-size: 14px;
+            margin: 5px 0; /* Reduced margin */
+            color: #555;
         }
     </style>
 </head>
@@ -260,11 +272,6 @@
     <h1>Let's Learn Neural Networks</h1>
  
     <div class="toolbar">
-        <div class="buttons">
-            <button class="button-replay" onclick="replayTraining()">&#8634;</button>
-            <button class="button-play" onclick="startTraining()">&#9658;</button>
-            <button class="button-skip" onclick="skipTraining()">&#9654;&#9654;</button>
-        </div>
         <div class="toolbar-item">
             <label for="learningRate"><strong>Learning Rate:</strong> How fast the model learns</label>
             <select id="learningRate">
@@ -348,8 +355,7 @@
         </div>
  
         <!-- Layers control column -->
-          <!-- Layers control column -->
-          <div class="column">
+        <div class="column">
             <h4>
                 <span id="num-layers">0</span>
                 <span id="layers-label">Hidden layers</span>
@@ -359,7 +365,7 @@
                 </div>
                
             </h4>
-          </div>
+        </div>
  
         <!-- Metrics column: displays result -->
         <div class="column">
@@ -370,8 +376,14 @@
             </div>
         </div>
  
-       
- 
+        <!-- Parameters Display -->
+        <div class="parameters-display" id="parameters-display">
+            <h4>Training Parameters</h4>
+            <p><strong>Learning Rate:</strong> <span id="display-learning-rate"></span></p>
+            <p><strong>Activation:</strong> <span id="display-activation"></span></p>
+            <p><strong>Regularization:</strong> <span id="display-regularization"></span></p>
+            <p><strong>Regularization Rate:</strong> <span id="display-regular-rate"></span></p>
+        </div>
     </div>
    
  
@@ -391,14 +403,6 @@
         </div>
         <!-- SVG overlay for connections -->
         <svg class="svg-overlay"></svg>
-    </div>
- 
-    <!-- Display parameters -->
-    <div class="parameters">
-        <p><strong>Learning Rate:</strong> <span id="display-learning-rate"></span></p>
-        <p><strong>Activation:</strong> <span id="display-activation"></span></p>
-        <p><strong>Regularization:</strong> <span id="display-regularization"></span></p>
-        <p><strong>Regularization Rate:</strong> <span id="display-regular-rate"></span></p>
     </div>
  
     <!-- Training section -->
@@ -485,14 +489,14 @@
        
         // Train model: use the hidden layers count to update accuracy and visualization.
         function trainModel() {
-            let layers = document.getElementById('num-layers').textContent;
+            let layers = parseInt(document.getElementById('num-layers').textContent);
             let problem = document.getElementById('problem').value;
             let inputX1 = parseFloat(document.getElementById('inputX1').value);
             let inputX2 = parseFloat(document.getElementById('inputX2').value);
-            let learningRate = document.getElementById('learningRate').value;
+            let learningRate = parseFloat(document.getElementById('learningRate').value);
             let activations = document.getElementById('activations').value;
             let regularizations = document.getElementById('regularizations').value;
-            let regularRate = document.getElementById('regularRate').value;
+            let regularRate = parseFloat(document.getElementById('regularRate').value);
  
             // Display parameters
             document.getElementById('display-learning-rate').innerText = learningRate;
@@ -500,29 +504,33 @@
             document.getElementById('display-regularization').innerText = regularizations;
             document.getElementById('display-regular-rate').innerText = regularRate;
  
-            $.ajax({
-                url: '/train',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    layers: layers,
-                    problem: problem,
-                    inputX1: inputX1,
-                    inputX2: inputX2,
-                    learningRate: learningRate,
-                    activations: activations,
-                    regularizations: regularizations,
-                    regularRate: regularRate
-                }),
-                success: function (response) {
-                    document.getElementById('accuracy').innerText = `Accuracy: ${response.accuracy}%`;
-                    updateNeuralNetwork(response.layers, response.weights, response.biases);
-                    updateAccuracyIndicator(response.accuracy); // Update accuracy indicator
-                    document.getElementById('x1-value').innerText = inputX1.toFixed(2);  // Display X1 value
-                    document.getElementById('x2-value').innerText = inputX2.toFixed(2);  // Display X2 value
-                    document.getElementById('output-value').innerText = (Math.random() * 1).toFixed(2);  // Display output value
+            // More realistic accuracy logic (client-side)
+            let accuracy = 50;
+            if (problem === 'classification') {
+                if (inputX1 === inputX2 && Math.random() > 0.1) {  // Correctly classified
+                    accuracy = 70 + layers * 5 + (1 - learningRate) * 10;
+                } else {
+                    accuracy = 30 - layers * 5 - (learningRate) * 10;
                 }
-            });
+            }
+ 
+            accuracy = Math.max(Math.min(accuracy, 100), 0);  // Cap accuracy between 0 and 100
+            document.getElementById('accuracy').innerText = `Accuracy: ${accuracy.toFixed(2)}%`;
+ 
+            // Dummy weights and biases for visualization
+            let weights = [];
+            let biases = [];
+            let neuronsPerLayer = 4;
+            for (let i = 0; i < layers; i++) {
+                weights.push(Array.from({ length: neuronsPerLayer }, () => (Math.random() * 0.2) - 0.1));
+                biases.push(Math.random());
+            }
+ 
+            updateNeuralNetwork(layers, weights, biases);
+            updateAccuracyIndicator(accuracy); // Update accuracy indicator
+            document.getElementById('x1-value').innerText = inputX1.toFixed(2);  // Display X1 value
+            document.getElementById('x2-value').innerText = inputX2.toFixed(2);  // Display X2 value
+            document.getElementById('output-value').innerText = (Math.random() * 1).toFixed(2);  // Display output value
         }
 
         function updateNeuralNetwork(layers, weights, biases) {
@@ -554,16 +562,6 @@
                 indicator.innerText = "Good accuracy!";
                 indicator.style.color = "green";
             }
-        }
-
-        function fetchInitialData() {
-            $.ajax({
-                url: '/get_dataset',
-                type: 'GET',
-                success: function (response) {
-                    document.getElementById('input-data').innerText = JSON.stringify(response, null, 2);
-                }
-            });
         }
  
         function createNeuralNetwork(layers, weights, biases) {
@@ -671,13 +669,9 @@
         }
  
         // Dummy functions for toolbar buttons (implement as needed)
-        function replayTraining() { alert('Replaying training...'); }
-        function startTraining() { alert('Starting training...'); }
-        function skipTraining() { alert('Skipping training...'); }
 
         // Fetch initial data on page load
         $(document).ready(function() {
-            fetchInitialData();
         });
     </script>
 </body>

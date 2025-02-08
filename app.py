@@ -31,10 +31,23 @@ def train():
     data = request.get_json()
     num_layers = int(data['layers'])
     problem_type = data['problem']
+    input_x1 = float(data['inputX1'])
+    input_x2 = float(data['inputX2'])
+    learning_rate = float(data['learningRate'])
+    activations = data['activations']
+    regularizations = data['regularizations']
+    regular_rate = float(data['regularRate'])
    
-    # Dummy accuracy logic for demonstration
-    accuracy = 50 + num_layers * 10  # More layers improve accuracy
-    accuracy = min(accuracy, 100)  # Cap accuracy at 100%
+    # More realistic accuracy logic
+    if problem_type == 'classification':
+        if (input_x1 == input_x2 and random.random() > 0.1):  # Correctly classified
+            accuracy = 70 + num_layers * 5 + (1 - learning_rate) * 10
+        else:
+            accuracy = 30 - num_layers * 5 - (learning_rate) * 10
+    else:
+        accuracy = 50  # Default accuracy for regression
+   
+    accuracy = max(min(accuracy, 100), 0)  # Cap accuracy between 0 and 100
    
     # Dummy weights and biases for visualization
     neurons_per_layer = 4  # Fixed neurons per layer for simplicity
