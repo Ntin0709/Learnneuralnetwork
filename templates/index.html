@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Trainer</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4c3; /* Light yellowish background */
+        }
+ 
+        .toolbar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #aed581; /* Light green toolbar */
+            padding: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 0 0px;
+            border-radius: 8px;
+        }
+ 
+        .toolbar-item {
+            text-align: center;
+        }
+ 
+        .toolbar-item label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+ 
+        .toolbar select {
+            padding: 5px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 150px;
+            background-color: #fff;
+        }
+ 
+        .container {
+            width: 70%;
+            margin: 20px auto;
+            text-align: center;
+        }
+ 
+        .plot {
+            width: 100%;
+            height: auto;
+        }
+ 
+        .buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+ 
+        .button-replay,
+        .button-skip {
+            font-size: 24px;
+            border: none;
+            cursor: pointer;
+            background: none;
+            color: #333;
+        }
+ 
+        .button-play {
+            font-size: 28px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+ 
+        .button-play:hover {
+            background-color: #e64a19;
+        }
+ 
+        .main-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-top: 20px;
+            gap: 20px;
+        }
+ 
+        .column {
+            flex: 1;
+           
+        }
+ 
+        .metrics {
+            flex: 1;
+            padding: 15px;
+ 
+        }
+ 
+        .layer-button {
+            font-size: 24px;
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            border: 2px solid #000;
+            background-color: #ffeb3b;
+            border-radius: 10px;
+        }
+ 
+        .layer-button:hover {
+            background-color: #fdd835;
+        }
+ 
+        .output-stats {
+            margin-top: 20px;
+        }
+ 
+        .output-stats .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+ 
+        /* Styles for neural network visualization */
+        .network-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+            min-height: 200px;
+        }
+ 
+        .layer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+            position: relative;
+        }
+ 
+        .neuron {
+            width: 60px;  /* Increased neuron size */
+            height: 60px; /* Increased neuron size */
+            background-color: #ff9800;
+            border-radius: 50%;
+            margin: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px; /* Increased font size */
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+        }
+ 
+        .output-neuron {
+            background-color: #689f38; /* Darker green output neuron */
+            color: white;
+            width: auto; /* Adjust width to content */
+            height: 70px; /* Increased output neuron size */
+            min-width: 70px; /* Minimum width */
+            padding: 5px; /* Add padding */
+            font-size: 18px; /* Increased font size */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+ 
+        .weights {
+            font-size: 12px;
+            margin-top: 1px;
+        }
+ 
+        .layer-label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+ 
+        .svg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+ 
+        h1, h2, h4 {
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+ 
+        p {
+            color: #555;
+        }
+ 
+        button {
+            background-color: #aed581; /* Light green button */
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #333;
+        }
+ 
+        button:hover {
+            background-color: #8bc34a; /* Slightly darker green on hover */
+        }
+
+        .requirements {
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            width: 80%;
+            text-align: left;
+        }
+        .requirements h3 {
+            margin-top: 0;
+        }
+
+        input[type="number"] {
+            padding: 8px;
+            font-size: 16px;
+            border: 2px solid #4fc3f7; /* Brighter border color */
+            border-radius: 8px;
+            width: 120px;
+            margin-bottom: 10px;
+            background-color: #fff;
+            color: #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #29b6f6; /* Highlight border on focus */
+        }
+    </style>
+</head>
+ 
+<body>
+ 
+    <h1>Let's Learn Neural Networks</h1>
+ 
+    <div class="toolbar">
+        <div class="buttons">
+            <button class="button-replay" onclick="replayTraining()">&#8634;</button>
+            <button class="button-play" onclick="startTraining()">&#9658;</button>
+            <button class="button-skip" onclick="skipTraining()">&#9654;&#9654;</button>
+        </div>
+        <div class="toolbar-item">
+            <label for="learningRate"><strong>Learning Rate:</strong> How fast the model learns</label>
+            <select id="learningRate">
+                <option value="0.00001">0.00001</option>
+                <option value="0.0001">0.0001</option>
+                <option value="0.001">0.001</option>
+                <option value="0.003">0.003</option>
+                <option value="0.01">0.01</option>
+                <option value="0.03">0.03</option>
+                <option value="0.1">0.1</option>
+                <option value="0.3">0.3</option>
+                <option value="1">1</option>
+                <option value="3">3</option>
+                <option value="10">10</option>
+            </select>
+        </div>
+        <div class="toolbar-item">
+            <label for="activations"><strong>Activation:</strong> It decides when a neuron turns on</label>
+            <select id="activations">
+                <option value="relu">ReLU</option>
+                <option value="tanh">Tanh</option>
+                <option value="sigmoid">Sigmoid</option>
+                <option value="linear">Linear</option>
+            </select>
+        </div>
+        <div class="toolbar-item">
+            <label for="regularizations"><strong>Regularization:</strong> Keeps the model’s guesses simple.</label>
+            <select id="regularizations">
+                <option value="none">None</option>
+                <option value="L1">L1</option>
+                <option value="L2">L2</option>
+            </select>
+        </div>
+        <div class="toolbar-item">
+            <label for="regularRate"><strong>Regularization Rate:</strong> How strict the simplicity rule is</label>
+            <select id="regularRate">
+                <option value="0">0</option>
+                <option value="0.001">0.001</option>
+                <option value="0.003">0.003</option>
+                <option value="0.01">0.01</option>
+                <option value="0.03">0.03</option>
+                <option value="0.1">0.1</option>
+                <option value="0.3">0.3</option>
+                <option value="1">1</option>
+                <option value="3">3</option>
+                <option value="10">10</option>
+            </select>
+        </div>
+        <div class="toolbar-item">
+            <label for="problem"><strong>Problem Type</strong></label>
+            <select id="problem">
+                <option value="classification" selected>Classification</option>
+                <option value="regression">Regression</option>
+            </select>
+        </div>
+    </div>
+ 
+    <div class="main-container">
+        <!-- Data column: displays the problem statement -->
+        <div class="column">
+            <h4>
+                <span style="font-size: 24px; color: #e91e63; font-weight: bold;">Classification Problem</span>
+            </h4>
+            <div style="background-color: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                <p style="font-size: 18px; color: #777;">
+                    <strong style="color: #333;">Problem Statement:</strong><br>
+                    Given two numbers (X1, X2), classify whether they are the same.<br>
+                    If X1 == X2, classify as 1 (Positive), otherwise classify as 0 (Negative).
+                </p>
+            </div>
+        </div>
+ 
+        <!-- Features column -->
+        <div class="column">
+            <h4>Features</h4>
+            <p>Which properties do you want to feed in?</p>
+            <label for="inputX1">Input X1:</label>
+            <input type="number" id="inputX1" value="0" step="0.1"><br>
+            <label for="inputX2">Input X2:</label>
+            <input type="number" id="inputX2" value="0" step="0.1">
+        </div>
+ 
+        <!-- Layers control column -->
+          <!-- Layers control column -->
+          <div class="column">
+            <h4>
+                <span id="num-layers">0</span>
+                <span id="layers-label">Hidden layers</span>
+                <div>
+                    <button id="add-layers" class="layer-button">+</button>
+                    <button id="remove-layers" class="layer-button">-</button>
+                </div>
+               
+            </h4>
+          </div>
+ 
+        <!-- Metrics column: displays result -->
+        <div class="column">
+            <div class="output-stats">
+                <span>Result</span>
+                <div class="value" id="accuracy">Accuracy: N/A</div>
+                <div id="accuracy-indicator"></div> <!-- Accuracy indicator -->
+            </div>
+        </div>
+ 
+       
+ 
+    </div>
+   
+ 
+    <!-- Neural Network Visualization section (moved up with reduced spacing) -->
+    <h2>Neural Network Visualization</h2>
+    <div class="network-container" id="network">
+        <!-- Input layer with label -->
+        <div class="layer" id="input-layer">
+            <div class="neuron">X1: <span id="x1-value">0</span></div>
+            <div class="neuron">X2: <span id="x2-value">0</span></div>
+            <div class="layer-label">Input Layer</div>
+        </div>
+        <!-- Output layer with label -->
+        <div class="layer" id="output-layer">
+            <div class="neuron output-neuron">Output: <span id="output-value">0</span></div>
+            <div class="layer-label">Output Layer</div>
+        </div>
+        <!-- SVG overlay for connections -->
+        <svg class="svg-overlay"></svg>
+    </div>
+ 
+    <!-- Display parameters -->
+    <div class="parameters">
+        <p><strong>Learning Rate:</strong> <span id="display-learning-rate"></span></p>
+        <p><strong>Activation:</strong> <span id="display-activation"></span></p>
+        <p><strong>Regularization:</strong> <span id="display-regularization"></span></p>
+        <p><strong>Regularization Rate:</strong> <span id="display-regular-rate"></span></p>
+    </div>
+ 
+    <!-- Training section -->
+    <h1>Train Your Neural Network</h1>
+    <div class="container">
+        <!-- The hidden layers are selected using the control above -->
+        <!-- <label for="problem">Problem Type:</label>
+        <select id="problem">
+            <option value="classification" selected>Classification</option>
+            <option value="regression">Regression</option>
+        </select>
+        <br><br> -->
+        <button onclick="trainModel()">Train Model</button>
+    </div>
+
+ 
+    <script>
+        // Increase or decrease hidden layers via the control buttons.
+        document.getElementById('add-layers').addEventListener('click', function () {
+            let numLayers = document.getElementById('num-layers');
+            let value = parseInt(numLayers.textContent);
+            if (value < 5) {
+                numLayers.textContent = value + 1;
+                addHiddenLayer(value + 1);
+            }
+        });
+ 
+        document.getElementById('remove-layers').addEventListener('click', function () {
+            let numLayers = document.getElementById('num-layers');
+            let value = parseInt(numLayers.textContent);
+            if (value > 0) {
+                numLayers.textContent = value - 1;
+                removeHiddenLayer();
+            }
+        });
+
+        function addHiddenLayer(layerNumber) {
+            let networkDiv = document.getElementById("network");
+            let hiddenLayer = document.createElement("div");
+            hiddenLayer.className = "layer";
+            hiddenLayer.setAttribute("id", `hidden-layer-${layerNumber}`);
+            for (let j = 0; j < 4; j++) {  // Fixed 4 neurons per layer
+                let neuron = document.createElement("div");
+                neuron.className = "neuron";
+                neuron.innerText = "0.00";  // Initial weight value
+                hiddenLayer.appendChild(neuron);
+
+                let weightText = document.createElement("div");
+                weightText.className = "weights";
+                weightText.innerText = "w = 0.00";  // Initial weight value
+                hiddenLayer.appendChild(weightText);
+
+                // Weight adjustment input
+                let weightInput = document.createElement("input");
+                weightInput.type = "number";
+                weightInput.value = "0.00";
+                weightInput.step = "0.01";
+                weightInput.className = "weight-input";
+                hiddenLayer.appendChild(weightInput);
+            }
+            let biasText = document.createElement("div");
+            biasText.className = "weights";
+            biasText.innerText = "b = 0.00";  // Initial bias value
+            hiddenLayer.appendChild(biasText);
+
+            let label = document.createElement("div");
+            label.className = "layer-label";
+            label.innerText = `Hidden Layer ${layerNumber}`;
+            hiddenLayer.appendChild(label);
+
+            networkDiv.insertBefore(hiddenLayer, document.getElementById("output-layer"));
+            drawConnections();
+        }
+
+        function removeHiddenLayer() {
+            let networkDiv = document.getElementById("network");
+            let lastHiddenLayer = networkDiv.querySelector(".layer:nth-last-child(2)");
+            if (lastHiddenLayer && lastHiddenLayer.querySelector(".layer-label").innerText.includes("Hidden Layer")) {
+                networkDiv.removeChild(lastHiddenLayer);
+                drawConnections();
+            }
+        }
+ 
+       
+        // Train model: use the hidden layers count to update accuracy and visualization.
+        function trainModel() {
+            let layers = document.getElementById('num-layers').textContent;
+            let problem = document.getElementById('problem').value;
+            let inputX1 = parseFloat(document.getElementById('inputX1').value);
+            let inputX2 = parseFloat(document.getElementById('inputX2').value);
+            let learningRate = document.getElementById('learningRate').value;
+            let activations = document.getElementById('activations').value;
+            let regularizations = document.getElementById('regularizations').value;
+            let regularRate = document.getElementById('regularRate').value;
+ 
+            // Display parameters
+            document.getElementById('display-learning-rate').innerText = learningRate;
+            document.getElementById('display-activation').innerText = activations;
+            document.getElementById('display-regularization').innerText = regularizations;
+            document.getElementById('display-regular-rate').innerText = regularRate;
+ 
+            $.ajax({
+                url: '/train',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    layers: layers,
+                    problem: problem,
+                    inputX1: inputX1,
+                    inputX2: inputX2,
+                    learningRate: learningRate,
+                    activations: activations,
+                    regularizations: regularizations,
+                    regularRate: regularRate
+                }),
+                success: function (response) {
+                    document.getElementById('accuracy').innerText = `Accuracy: ${response.accuracy}%`;
+                    updateNeuralNetwork(response.layers, response.weights, response.biases);
+                    updateAccuracyIndicator(response.accuracy); // Update accuracy indicator
+                    document.getElementById('x1-value').innerText = inputX1.toFixed(2);  // Display X1 value
+                    document.getElementById('x2-value').innerText = inputX2.toFixed(2);  // Display X2 value
+                    document.getElementById('output-value').innerText = (Math.random() * 1).toFixed(2);  // Display output value
+                }
+            });
+        }
+
+        function updateNeuralNetwork(layers, weights, biases) {
+            for (let i = 0; i < layers; i++) {
+                let hiddenLayer = document.getElementById(`hidden-layer-${i + 1}`);
+                let neurons = hiddenLayer.getElementsByClassName("neuron");
+                let weightTexts = hiddenLayer.getElementsByClassName("weights");
+                let weightInputs = hiddenLayer.getElementsByClassName("weight-input"); // Get weight input elements
+                for (let j = 0; j < neurons.length; j++) {
+                    neurons[j].innerText = (Math.random() * 1).toFixed(2);  // Update neuron activation
+                    weightTexts[j].innerText = `w = ${weights[i][j].toFixed(2)}`;  // Update weight value
+                    // Update weight input value
+                    weightInputs[j].value = weights[i][j].toFixed(2);
+                }
+                weightTexts[neurons.length].innerText = `b = ${biases[i].toFixed(2)}`;  // Update bias value
+            }
+            drawConnections();
+        }
+
+        function updateAccuracyIndicator(accuracy) {
+            let indicator = document.getElementById('accuracy-indicator');
+            if (accuracy < 60) {
+                indicator.innerText = "Consider adding more layers or adjusting weights.";
+                indicator.style.color = "red";
+            } else if (accuracy < 80) {
+                indicator.innerText = "Consider fine-tuning weights for better accuracy.";
+                indicator.style.color = "orange";
+            } else {
+                indicator.innerText = "Good accuracy!";
+                indicator.style.color = "green";
+            }
+        }
+
+        function fetchInitialData() {
+            $.ajax({
+                url: '/get_dataset',
+                type: 'GET',
+                success: function (response) {
+                    document.getElementById('input-data').innerText = JSON.stringify(response, null, 2);
+                }
+            });
+        }
+ 
+        function createNeuralNetwork(layers, weights, biases) {
+            let networkDiv = document.getElementById("network");
+            networkDiv.innerHTML = "";  // Clear previous visualization
+ 
+            // Create SVG overlay for drawing connection lines
+            let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("class", "svg-overlay");
+            networkDiv.appendChild(svg);
+ 
+            // Input layer with label
+            let inputLayer = document.createElement("div");
+            inputLayer.className = "layer";
+            inputLayer.innerHTML = `
+                <div class="neuron">X1</div>
+                <div class="neuron">X2</div>
+                <div class="layer-label">Input Layer</div>
+            `;
+            networkDiv.appendChild(inputLayer);
+ 
+            // Hidden layers with labels
+            for (let i = 0; i < layers; i++) {
+                let hiddenLayer = document.createElement("div");
+                hiddenLayer.className = "layer";
+               
+                for (let j = 0; j < 4; j++) {  // Fixed 4 neurons per layer
+                    let neuron = document.createElement("div");
+                    neuron.className = "neuron";
+                    // For demonstration, using random values for neuron activations
+                    neuron.innerText = (Math.random() * 1).toFixed(2);
+                    hiddenLayer.appendChild(neuron);
+ 
+                    let weightText = document.createElement("div");
+                    weightText.className = "weights";
+                    weightText.innerText = `w = ${weights[i][j].toFixed(2)}`;
+                    hiddenLayer.appendChild(weightText);
+                }
+ 
+                let biasText = document.createElement("div");
+                biasText.className = "weights";
+                biasText.innerText = `b = ${biases[i].toFixed(2)}`;
+                hiddenLayer.appendChild(biasText);
+ 
+                let label = document.createElement("div");
+                label.className = "layer-label";
+                label.innerText = `Hidden Layer ${i+1}`;
+                hiddenLayer.appendChild(label);
+ 
+                networkDiv.appendChild(hiddenLayer);
+            }
+ 
+            // Output layer with label
+            let outputLayer = document.createElement("div");
+            outputLayer.className = "layer";
+            outputLayer.innerHTML = `<div class="neuron output-neuron">Output</div>
+                                     <div class="layer-label">Output Layer</div>`;
+            networkDiv.appendChild(outputLayer);
+ 
+            // After building layers, draw connections between neurons
+            drawConnections();
+        }
+ 
+        // Draw lines connecting neurons in adjacent layers using an SVG overlay
+        function drawConnections() {
+            let container = document.getElementById("network");
+            let containerRect = container.getBoundingClientRect();
+            let svg = container.querySelector("svg.svg-overlay");
+            if (!svg) {
+                svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svg.setAttribute("class", "svg-overlay");
+                container.appendChild(svg);
+            }
+            svg.innerHTML = "";  // Clear previous lines
+ 
+            // Get all layers (skip the SVG overlay)
+            let layers = container.getElementsByClassName("layer");
+            for (let i = 0; i < layers.length - 1; i++) {
+                let currentLayer = layers[i];
+                let nextLayer = layers[i+1];
+                let currentNeurons = currentLayer.getElementsByClassName("neuron");
+                let nextNeurons = nextLayer.getElementsByClassName("neuron");
+                for (let j = 0; j < currentNeurons.length; j++) {
+                    let neuron1 = currentNeurons[j];
+                    let rect1 = neuron1.getBoundingClientRect();
+                    let x1 = rect1.left + rect1.width/2 - containerRect.left;
+                    let y1 = rect1.top + rect1.height/2 - containerRect.top;
+                    for (let k = 0; k < nextNeurons.length; k++) {
+                        let neuron2 = nextNeurons[k];
+                        let rect2 = neuron2.getBoundingClientRect();
+                        let x2 = rect2.left + rect2.width/2 - containerRect.left;
+                        let y2 = rect2.top + rect2.height/2 - containerRect.top;
+ 
+                        let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                        line.setAttribute("x1", x1);
+                        line.setAttribute("y1", y1);
+                        line.setAttribute("x2", x2);
+                        line.setAttribute("y2", y2);
+                        line.setAttribute("stroke", "#999");
+                        line.setAttribute("stroke-width", "1");
+                        svg.appendChild(line);
+                    }
+                }
+            }
+        }
+ 
+        // Dummy functions for toolbar buttons (implement as needed)
+        function replayTraining() { alert('Replaying training...'); }
+        function startTraining() { alert('Starting training...'); }
+        function skipTraining() { alert('Skipping training...'); }
+
+        // Fetch initial data on page load
+        $(document).ready(function() {
+            fetchInitialData();
+        });
+    </script>
+</body>
+ 
+</html>
